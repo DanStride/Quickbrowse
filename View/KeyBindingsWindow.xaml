@@ -1,0 +1,60 @@
+﻿<Window x:Class="VSA_Viewer.View.KeyBindingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:VSA_Viewer.View"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        KeyDown="Window_KeyDown"
+        Title="KeyBindingsWindow" Height="450" Width="800"
+        ResizeMode="NoResize"
+        WindowStyle="None"
+        BorderBrush="{StaticResource VSABlue}"
+        BorderThickness="2">
+    <Window.Background>
+        <ImageBrush ImageSource="vsa-background-450x800.png" />
+    </Window.Background>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+
+            <TextBlock Text="Key Binding" 
+                       Grid.Column="1"
+                       Foreground="{StaticResource VSABlue}"
+                       FontSize="30"
+                   HorizontalAlignment="Center"
+                   Margin="0,20,0,10" />
+            <TextBlock Grid.Row="1"
+                       Grid.Column="0"
+                       Grid.ColumnSpan="3"
+                        Foreground="AntiqueWhite"
+                       FontSize="20"
+                   Margin="10,30,0,0"
+                       LineStackingStrategy="BlockLineHeight"
+                       LineHeight="40">
+                Enter: Save selected image <LineBreak />
+                Numpad 0: Select random image from current folder <LineBreak />
+                Escape (While in fullscreen mode): Close fullscreen mode <LineBreak />
+                Up/Down: Navigate through images in current folder <LineBreak />
+                Left/Right: Change to next folder in parent directory
+            </TextBlock>
+
+        <Button x:Name="okButton" 
+                    Style="{StaticResource MenuButtons}"
+                    Grid.Row="2"
+                    Grid.Column="1"
+                Content="OK"
+                Click="okButton_Click"
+                Margin="10,10,10,30" />
+        
+    </Grid>
+</Window>
