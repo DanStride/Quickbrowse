@@ -1,0 +1,48 @@
+E:\GitHub Projects\Quickbrowse\Quickbrowse\obj\Debug\Quickbrowse.csprojAssemblyReference.cache
+E:\GitHub Projects\Quickbrowse\Quickbrowse\obj\Debug\View\FullScreenWindow.g.cs
+E:\GitHub Projects\Quickbrowse\Quickbrowse\obj\Debug\View\KeyBindingsWindow.g.cs
+E:\GitHub Projects\Quickbrowse\Quickbrowse\obj\Debug\View\SettingsWindow.g.cs
+E:\GitHub Projects\Quickbrowse\Quickbrowse\obj\Debug\View\VSAWindow.g.cs
+E:\GitHub Projects\Quickbrowse\Quickbrowse\obj\Debug\App.g.cs
+E:\GitHub Projects\Quickbrowse\Quickbrowse\obj\Debug\GeneratedInternalTypeHelper.g.cs
+E:\GitHub Projects\Quickbrowse\Quickbrowse\obj\Debug\VSA Viewer_MarkupCompile.cache
+E:\GitHub Projects\Quickbrowse\Quickbrowse\obj\Debug\VSA Viewer_MarkupCompile.lref
+E:\GitHub Projects\Quickbrowse\Quickbrowse\bin\Debug\runtimes\win-x86\native\e_sqlite3.dll
+E:\GitHub Projects\Quickbrowse\Quickbrowse\bin\Debug\runtimes\win-x64\native\e_sqlite3.dll
+E:\GitHub Projects\Quickbrowse\Quickbrowse\bin\Debug\runtimes\win-arm\native\e_sqlite3.dll
+E:\GitHub Projects\Quickbrowse\Quickbrowse\bin\Debug\VSA Viewer.exe.config
+E:\GitHub Projects\Quickbrowse\Quickbrowse\bin\Debug\VSA Viewer.exe
+E:\GitHub Projects\Quickbrowse\Quickbrowse\bin\Debug\VSA Viewer.pdb
+E:\GitHub Projects\Quickbrowse\Quickbrowse\bin\Debug\Newtonsoft.Json.dll
+E:\GitHub Projects\Quickbrowse\Quickbrowse\bin\Debug\Reddit.NET.dll
+E:\GitHub Projects\Quickbrowse\Quickbrowse\bin\Debug\RestSharp.dll
+E:\GitHub Projects\Quickbrowse\Quickbrowse\bin\Debug\SQLite-net.dll
+E:\GitHub Projects\Quickbrowse\Quickbrowse\bin\Debug\SQLitePCLRaw.batteries_v2.dll
+E:\GitHub Projects\Quickbrowse\Quickbrowse\bin\Debug\SQLitePCLRaw.core.dll
+E:\GitHub Projects\Quickbrowse\Quickbrowse\bin\Debug\SQLitePCLRaw.nativelibrary.dll
+E:\GitHub Projects\Quickbrowse\Quickbrowse\bin\Debug\SQLitePCLRaw.provider.dynamic_cdecl.dll
+E:\GitHub Projects\Quickbrowse\Quickbrowse\bin\Debug\System.Buffers.dll
+E:\GitHub Projects\Quickbrowse\Quickbrowse\bin\Debug\System.Memory.dll
+E:\GitHub Projects\Quickbrowse\Quickbrowse\bin\Debug\System.Numerics.Vectors.dll
+E:\GitHub Projects\Quickbrowse\Quickbrowse\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+E:\GitHub Projects\Quickbrowse\Quickbrowse\bin\Debug\Newtonsoft.Json.xml
+E:\GitHub Projects\Quickbrowse\Quickbrowse\bin\Debug\Reddit.NET.xml
+E:\GitHub Projects\Quickbrowse\Quickbrowse\bin\Debug\RestSharp.xml
+E:\GitHub Projects\Quickbrowse\Quickbrowse\bin\Debug\SQLite-net.xml
+E:\GitHub Projects\Quickbrowse\Quickbrowse\bin\Debug\System.Buffers.xml
+E:\GitHub Projects\Quickbrowse\Quickbrowse\bin\Debug\System.Memory.xml
+E:\GitHub Projects\Quickbrowse\Quickbrowse\bin\Debug\System.Numerics.Vectors.xml
+E:\GitHub Projects\Quickbrowse\Quickbrowse\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
+E:\GitHub Projects\Quickbrowse\Quickbrowse\obj\Debug\VSA Viewer_Content.g.cs
+E:\GitHub Projects\Quickbrowse\Quickbrowse\obj\Debug\App.baml
+E:\GitHub Projects\Quickbrowse\Quickbrowse\obj\Debug\View\FullScreenWindow.baml
+E:\GitHub Projects\Quickbrowse\Quickbrowse\obj\Debug\View\KeyBindingsWindow.baml
+E:\GitHub Projects\Quickbrowse\Quickbrowse\obj\Debug\View\SettingsWindow.baml
+E:\GitHub Projects\Quickbrowse\Quickbrowse\obj\Debug\View\VSAWindow.baml
+E:\GitHub Projects\Quickbrowse\Quickbrowse\obj\Debug\VSA Viewer.g.resources
+E:\GitHub Projects\Quickbrowse\Quickbrowse\obj\Debug\VSA_Viewer.Properties.Resources.resources
+E:\GitHub Projects\Quickbrowse\Quickbrowse\obj\Debug\Quickbrowse.csproj.GenerateResource.cache
+E:\GitHub Projects\Quickbrowse\Quickbrowse\obj\Debug\Quickbrowse.csproj.CoreCompileInputs.cache
+E:\GitHub Projects\Quickbrowse\Quickbrowse\obj\Debug\Quickbrowse.csproj.CopyComplete
+E:\GitHub Projects\Quickbrowse\Quickbrowse\obj\Debug\VSA Viewer.exe
+E:\GitHub Projects\Quickbrowse\Quickbrowse\obj\Debug\VSA Viewer.pdb
