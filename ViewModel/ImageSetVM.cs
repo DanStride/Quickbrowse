@@ -21,14 +21,14 @@ namespace VSA_Viewer.ViewModel
         public FullScreenWindow fullScreenWindow { get; set; }
         public SettingsWindow settingsWindow { get; set; }
         public KeyBindingsWindow keyBindingsWindow { get; set; }
-        private static readonly string[] IMAGE_TYPES = { ".jpg", ".JPG", ".png", ".PNG", ".bmp", ".BMP" };
+        private static readonly string[] IMAGE_TYPES = { ".jpg", ".JPG", ".png", ".PNG", ".bmp", ".BMP", ".jpeg", ".JPEG", ".gif", ".GIF" };
 
         private string savePath;
         public string SavePath
         {
             get { return savePath; }
-            set 
-            { 
+            set
+            {
                 savePath = value;
                 OnPropertyChanged("SavePath");
             }
@@ -50,6 +50,8 @@ namespace VSA_Viewer.ViewModel
         public SaveCommand SaveCommand { get; set; }
         public NextFolderCommand NextFolderCommand { get; set; }
         public PreviousFolderCommand PreviousFolderCommand { get; set; }
+        public ParentFolderCommand ParentFolderCommand { get; set; }
+        public SubFolderCommand SubFolderCommand { get; set; }
         public SaveStateCommand SaveStateCommand { get; set; }
         public LoadStateCommand LoadStateCommand { get; set; }
         public FullScreenCommand FullScreenCommand { get; set; }
@@ -68,7 +70,7 @@ namespace VSA_Viewer.ViewModel
         public BitmapImage CurrentImage
         {
             get { return currentImage; }
-            set 
+            set
             {
                 currentImage = value;
                 OnPropertyChanged("CurrentImage");
@@ -80,8 +82,8 @@ namespace VSA_Viewer.ViewModel
         public Uri SelectedImageUri
         {
             get { return selectedImageUri; }
-            set 
-            { 
+            set
+            {
                 selectedImageUri = value;
                 OnPropertyChanged("SelectedImageUri");
                 ChangeImage(SelectedImageUri);
@@ -92,22 +94,22 @@ namespace VSA_Viewer.ViewModel
 
         public int SelectedItemIndex
         {
-            get 
+            get
             {
-                return selectedItemIndex; 
+                return selectedItemIndex;
             }
-            set 
-            { 
+            set
+            {
                 selectedItemIndex = value;
                 if ((ImageSet.ImagesInFolder != null) && (selectedItemIndex < ImageSet.ImagesInFolder.Count))
                 {
                     SelectedItemIsImage = true;
                 }
-                else 
+                else
                 {
                     SelectedItemIsImage = false;
                 }
-                    OnPropertyChanged("SelectedItemIndex");
+                OnPropertyChanged("SelectedItemIndex");
             }
         }
 
@@ -116,9 +118,9 @@ namespace VSA_Viewer.ViewModel
         public bool SelectedItemIsImage
         {
             get { return selectedItemIsImage; }
-            set 
-            { 
-                selectedItemIsImage = value; 
+            set
+            {
+                selectedItemIsImage = value;
             }
         }
 
@@ -128,8 +130,8 @@ namespace VSA_Viewer.ViewModel
         public string SelectedFolder
         {
             get { return selectedFolder; }
-            set 
-            { 
+            set
+            {
                 selectedFolder = value;
                 OnPropertyChanged("SelectedFolder");
             }
@@ -145,6 +147,8 @@ namespace VSA_Viewer.ViewModel
             SaveCommand = new SaveCommand(this);
             NextFolderCommand = new NextFolderCommand(this);
             PreviousFolderCommand = new PreviousFolderCommand(this);
+            ParentFolderCommand = new ParentFolderCommand(this);
+            SubFolderCommand = new SubFolderCommand(this);
             SaveStateCommand = new SaveStateCommand(this);
             LoadStateCommand = new LoadStateCommand(this);
             FullScreenCommand = new FullScreenCommand(this);
@@ -183,7 +187,16 @@ namespace VSA_Viewer.ViewModel
 
             foreach (var folder in folderArray)
             {
-                newFolderSet.Add(folder);
+                var directoryInfo = new DirectoryInfo(folder);
+
+                bool isSystem = (directoryInfo.Attributes & FileAttributes.System) == FileAttributes.System;
+
+                // Add the folder to the list only if it is not a system folder.
+                if (!isSystem)
+                {
+                    newFolderSet.Add(folder);
+                }
+
             }
             return newFolderSet;
         }
@@ -203,6 +216,19 @@ namespace VSA_Viewer.ViewModel
             {
                 SetImageSet(ofd.FileName);
             }
+        }
+
+
+        public void SetImageSetForDirectory(string path)
+        {
+            ImageSet.FolderPath = path;
+
+            ImageSet.ImagesInFolder = GetImagesInFolder();
+            ImageSet.FoldersInFolder = GetFoldersInFolder();
+
+            ImageSet.ItemsInFolder = new ObservableCollection<string>(ImageSet.ImagesInFolder.Concat(ImageSet.FoldersInFolder));
+
+            SelectedItemIndex = ImageSet.ItemsInFolder.IndexOf(ImageSet.ItemsInFolder.Where(x => x.Contains(CurrentImage.UriSource.LocalPath)).FirstOrDefault());
         }
 
         public void SetImageSet(string fileName)
@@ -225,11 +251,11 @@ namespace VSA_Viewer.ViewModel
         {
             if (uri != null && SelectedItemIsImage)
             {
-                    if (Path.GetExtension(uri.LocalPath) != "")
-                    {
-                        CurrentImage = new BitmapImage(uri);
-                        SelectedItemIndex = ImageSet.ItemsInFolder.IndexOf(ImageSet.ItemsInFolder.Where(x => x.Contains(CurrentImage.UriSource.LocalPath)).FirstOrDefault());
-                    }
+                if (Path.GetExtension(uri.LocalPath) != "")
+                {
+                    CurrentImage = new BitmapImage(uri);
+                    SelectedItemIndex = ImageSet.ItemsInFolder.IndexOf(ImageSet.ItemsInFolder.Where(x => x.Contains(CurrentImage.UriSource.LocalPath)).FirstOrDefault());
+                }
             }
         }
 
@@ -284,18 +310,52 @@ namespace VSA_Viewer.ViewModel
             SetImageSet(imagePath);
         }
 
-        public string GetImageFromFolder(string folder)
+        public void ChangeToParentFolder()
         {
-            string filePath = "";
+            string parentFolder = Repo.GetParentFolder(this);
 
-            string[] files = Directory.GetFiles(folder);
+            SetImageSetForDirectory(parentFolder);
+        }
 
-            if (files.Length > 0)
+        public void ChangeToSubFolder()
+        {
+            var folder = SelectedImageUri;
+
+            string imagePath = GetImageFromFolder(SelectedImageUri.LocalPath);
+
+            if (imagePath != "")
             {
-                filePath = files[0];
+                SetImageSet(imagePath);
+            }
+            else
+            {
+                SetImageSetForDirectory(SelectedImageUri.LocalPath);
             }
 
-            return filePath;
+        }
+
+
+        public string GetImageFromFolder(string folder)
+        {
+            string[] files = Directory.GetFiles(folder);
+
+            string[] imageExtensions = new string[] { ".jpg", ".jpeg", ".png", ".bmp", ".gif" };
+
+            foreach (string file in files)
+            {
+
+                string extension = Path.GetExtension(file).ToLower();
+
+                foreach (string imageExtension in imageExtensions)
+                {
+                    if (extension == imageExtension)
+                    {
+                        return file;
+                    }
+                }
+            }
+
+            return "";
         }
 
         public void LoadFromState(State state)
@@ -334,6 +394,6 @@ namespace VSA_Viewer.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        
+
     }
 }

@@ -120,5 +120,20 @@ namespace VSA_Viewer.Classes
             return vm.ImageSet.FolderPath;
         }
 
+        public static string GetParentFolder(ImageSetVM vm)
+        {
+            if (Directory.GetParent(vm.ImageSet.FolderPath) != null)
+            {
+                string parentFolder = Directory.GetParent(vm.ImageSet.FolderPath).ToString();
+
+                if (parentFolder != null)
+
+                    return parentFolder;
+
+            }
+
+            return vm.ImageSet.FolderPath;
+        }
+
     }
 }

@@ -135,10 +135,12 @@
     </ApplicationDefinition>
     <Compile Include="ViewModel\Commands\KeyBindingsWindowCommand.cs" />
     <Compile Include="ViewModel\Commands\NextImageCommand.cs" />
+    <Compile Include="ViewModel\Commands\ParentFolderCommand.cs" />
     <Compile Include="ViewModel\Commands\PreviousImageCommand.cs" />
     <Compile Include="ViewModel\Commands\RandomImageCommand.cs" />
     <Compile Include="ViewModel\Commands\SetNewSavePathCommand.cs" />
     <Compile Include="ViewModel\Commands\SettingsWindowCommand.cs" />
+    <Compile Include="ViewModel\Commands\SubFolderCommand.cs" />
     <Compile Include="ViewModel\Helpers\DatabaseHandler.cs" />
     <Compile Include="ViewModel\Repo.cs" />
     <Compile Include="Model\StateClass.cs" />

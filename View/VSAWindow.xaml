@@ -467,6 +467,10 @@
                                     Command="{Binding NextImageCommand}" />
                         <KeyBinding Key="Up"
                                     Command="{Binding PreviousImageCommand}" />
+                        <KeyBinding Key="OemPeriod"
+                                    Command="{Binding ParentFolderCommand}" />
+                        <KeyBinding Key="OemQuestion"
+                                    Command="{Binding SubFolderCommand}" />
                     </ListView.InputBindings>
 
                 </ListView>
