@@ -500,6 +500,7 @@
 
             <Image x:Name="img_display"
                    Source="{Binding CurrentImage}"
+                   RenderOptions.BitmapScalingMode="HighQuality"
                    Width="auto"
                    Height="auto"
                    Grid.Column="2"

@@ -20,7 +20,8 @@
     </Window.Background>
 
     <Image x:Name="backgroundImage"
-           Source="{Binding CurrentImage}">
+           Source="{Binding CurrentImage}"
+           RenderOptions.BitmapScalingMode="HighQuality">
     </Image>
 
 </Window>
