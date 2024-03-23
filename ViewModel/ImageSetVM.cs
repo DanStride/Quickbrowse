@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.IO.Packaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -138,6 +139,16 @@ namespace VSA_Viewer.ViewModel
         }
 
 
+        private string previousFolder;
+        public string PreviousFolder
+        {
+            get { return previousFolder; }
+            set
+            {
+                previousFolder = value;
+                OnPropertyChanged("PreviousFolder");
+            }
+        }
 
 
         public ImageSetVM()
@@ -228,7 +239,17 @@ namespace VSA_Viewer.ViewModel
 
             ImageSet.ItemsInFolder = new ObservableCollection<string>(ImageSet.ImagesInFolder.Concat(ImageSet.FoldersInFolder));
 
-            SelectedItemIndex = ImageSet.ItemsInFolder.IndexOf(ImageSet.ItemsInFolder.Where(x => x.Contains(CurrentImage.UriSource.LocalPath)).FirstOrDefault());
+            SelectedItemIndex = ImageSet.FoldersInFolder.IndexOf(ImageSet.ItemsInFolder.Where(x => x.Contains(PreviousFolder)).FirstOrDefault());
+            if (SelectedItemIndex == -1) 
+            {
+                SelectedItemIndex = 0;
+            }
+
+    
+
+
+
+            //SelectedItemIndex = ImageSet.ItemsInFolder.IndexOf(ImageSet.ItemsInFolder.Where(x => x.Contains(CurrentImage.UriSource.LocalPath)).FirstOrDefault());
         }
 
         public void SetImageSet(string fileName)
@@ -263,11 +284,25 @@ namespace VSA_Viewer.ViewModel
         {
             if (ImageSet.ItemsInFolder != null)
             {
-                int index = ImageSet.ItemsInFolder.IndexOf(CurrentImage.UriSource.LocalPath);
+                string path = SelectedImageUri.LocalPath;
+                string current = "";
+
+                if (Directory.Exists(path))
+                {
+                    var directoryInfo = new DirectoryInfo(path);
+                    current = directoryInfo.Name;
+                }
+
+                else if (File.Exists(path))
+                {
+                    current = Path.GetFileName(path); 
+                }
+
+                int index = ImageSet.ItemsInFolder.IndexOf(ImageSet.ItemsInFolder.Where(x => x.Contains(current)).FirstOrDefault());
 
                 if (index < ImageSet.ItemsInFolder.Count - 1)
                 {
-                    ChangeImage(new Uri(ImageSet.ItemsInFolder[index + 1]));
+                    SelectedItemIndex = index + 1;
                 }
             }
         }
@@ -276,13 +311,28 @@ namespace VSA_Viewer.ViewModel
         {
             if (ImageSet.ItemsInFolder != null)
             {
-                int index = ImageSet.ItemsInFolder.IndexOf(CurrentImage.UriSource.LocalPath);
+                string path = SelectedImageUri.LocalPath;
+                string current = "";
+
+                if (Directory.Exists(path))
+                {
+                    var directoryInfo = new DirectoryInfo(path);
+                    current = directoryInfo.Name;
+                }
+
+                else if (File.Exists(path))
+                {
+                    current = Path.GetFileName(path);
+                }
+
+                int index = ImageSet.ItemsInFolder.IndexOf(ImageSet.ItemsInFolder.Where(x => x.Contains(current)).FirstOrDefault());
 
                 if (index > 0)
                 {
-                    ChangeImage(new Uri(ImageSet.ItemsInFolder[index - 1]));
+                    SelectedItemIndex = index - 1;
                 }
             }
+
         }
 
         public void ChangeToRandomImage()
@@ -312,6 +362,8 @@ namespace VSA_Viewer.ViewModel
 
         public void ChangeToParentFolder()
         {
+            PreviousFolder = Repo.GetCurrentFolderName(this);
+
             string parentFolder = Repo.GetParentFolder(this);
 
             SetImageSetForDirectory(parentFolder);
@@ -319,19 +371,20 @@ namespace VSA_Viewer.ViewModel
 
         public void ChangeToSubFolder()
         {
-            var folder = SelectedImageUri;
-
-            string imagePath = GetImageFromFolder(SelectedImageUri.LocalPath);
-
-            if (imagePath != "")
+            if (SelectedImageUri != null) 
             {
-                SetImageSet(imagePath);
-            }
-            else
-            {
-                SetImageSetForDirectory(SelectedImageUri.LocalPath);
-            }
+                string imagePath = GetImageFromFolder(SelectedImageUri.LocalPath);
 
+                if (imagePath != "")
+                {
+                    SetImageSet(imagePath);
+                }
+                else
+                {
+                    SetImageSetForDirectory(SelectedImageUri.LocalPath);
+                }
+            }
+  
         }
 
 

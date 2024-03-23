@@ -135,5 +135,17 @@ namespace VSA_Viewer.Classes
             return vm.ImageSet.FolderPath;
         }
 
+        public static string GetCurrentFolderName(ImageSetVM vm)
+        {
+            var directoryInfo = new DirectoryInfo(vm.ImageSet.FolderPath);
+            if (directoryInfo.Exists)
+            {
+                return directoryInfo.Name;
+            }
+            else
+            {
+                return vm.ImageSet.FolderPath;
+            }
+        }
     }
 }
