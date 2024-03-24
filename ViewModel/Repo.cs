@@ -147,5 +147,58 @@ namespace VSA_Viewer.Classes
                 return vm.ImageSet.FolderPath;
             }
         }
+
+        public static void SaveEntireFolder(ImageSetVM vm)
+        {
+            try
+            {
+                string sourceDirectory = System.IO.Path.GetDirectoryName(vm.SelectedImageUri.LocalPath);
+                string destinationDirectory = vm.SavePath;
+
+                // Check if the destination directory exists; if not, create it.
+                if (!System.IO.Directory.Exists(destinationDirectory))
+                {
+                    using (var fbd = new FolderBrowserDialog())
+                    {
+                        DialogResult result = fbd.ShowDialog();
+
+                        if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
+                        {
+                            vm.SavePath = fbd.SelectedPath;
+                            destinationDirectory = vm.SavePath;
+                        }
+                    }
+                }
+
+                // Method to copy all files and subdirectories
+                void CopyAll(string source, string target)
+                {
+                    System.IO.Directory.CreateDirectory(target);
+
+                    foreach (string directoryPath in System.IO.Directory.GetDirectories(source, "*", System.IO.SearchOption.AllDirectories))
+                        System.IO.Directory.CreateDirectory(directoryPath.Replace(source, target));
+
+                    foreach (string filePath in System.IO.Directory.GetFiles(source, "*.*", System.IO.SearchOption.AllDirectories))
+                        System.IO.File.Copy(filePath, filePath.Replace(source, target), true);
+                }
+
+                // Check if source directory exists before attempting to copy
+                if (System.IO.Directory.Exists(sourceDirectory))
+                {
+                    CopyAll(sourceDirectory, destinationDirectory);
+                    MessageBox.Show("Save Successful");
+                }
+                else
+                {
+                    MessageBox.Show($"Source directory does not exist: {sourceDirectory}");
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Something went wrong");
+            }
+
+        }
+
     }
 }

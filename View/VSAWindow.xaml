@@ -457,6 +457,8 @@
                     <ListView.InputBindings>
                         <KeyBinding Key="Enter"
                                     Command="{Binding SaveCommand}" />
+                        <KeyBinding Key="Space"
+                                    Command="{Binding SaveCommand}" />
                         <KeyBinding Key="Right"
                                     Command="{Binding NextFolderCommand}" />
                         <KeyBinding Key="D"
@@ -485,6 +487,8 @@
                                     Command="{Binding SubFolderCommand}" />
                         <KeyBinding Key="E"
                                     Command="{Binding SubFolderCommand}" />
+                        <KeyBinding Key="X"
+                                    Command="{Binding SaveEntireFolderCommand}" />
                     </ListView.InputBindings>
 
                 </ListView>

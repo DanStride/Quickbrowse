@@ -49,6 +49,7 @@ namespace VSA_Viewer.ViewModel
 
         public LoadCommand LoadCommand { get; set; }
         public SaveCommand SaveCommand { get; set; }
+        public SaveEntireFolderCommand SaveEntireFolderCommand { get; set; }
         public NextFolderCommand NextFolderCommand { get; set; }
         public PreviousFolderCommand PreviousFolderCommand { get; set; }
         public ParentFolderCommand ParentFolderCommand { get; set; }
@@ -156,6 +157,7 @@ namespace VSA_Viewer.ViewModel
             ImageSet = new ImageSet();
             LoadCommand = new LoadCommand(this);
             SaveCommand = new SaveCommand(this);
+            SaveEntireFolderCommand = new SaveEntireFolderCommand(this);
             NextFolderCommand = new NextFolderCommand(this);
             PreviousFolderCommand = new PreviousFolderCommand(this);
             ParentFolderCommand = new ParentFolderCommand(this);
