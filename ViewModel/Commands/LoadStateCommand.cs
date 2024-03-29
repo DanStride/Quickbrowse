@@ -32,7 +32,7 @@ namespace VSA_Viewer.ViewModel.Commands
         public void Execute(object parameter)
         {
             DatabaseHandler dh = new DatabaseHandler();
-            State newState = dh.GetState();
+            App_State newState = dh.GetState();
             if (newState.currentImage != null && newState.folderPath != null)
             {
                 VM.LoadFromState(newState);

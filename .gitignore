@@ -14,9 +14,7 @@
 # Mono Auto Generated Files
 mono_crash.*
 
-# Windows image file caches
-Thumbs.db
-ehthumbs.db
+*.db
 
 # Folder config file
 Desktop.ini

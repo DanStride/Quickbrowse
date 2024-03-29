@@ -8,18 +8,20 @@ using SQLite;
 
 namespace VSA_Viewer.Classes
 {
-    [Table("State")]
-    public class State
+    [Table("App_State")]
+    public class App_State
     {
         [PrimaryKey]
-        [Column("folderPath")]
+        [Column("Folder_Path")]
         public string folderPath { get; set; }
                 
-        [Column("currentImage")]
+        [Column("Current_Image")]
         public string currentImage { get; set; }
 
-        [Column("savePath")]
+        [Column("Save_Path")]
         public string savePath { get; set; }
+        [Column("Auto_Load")]
+        public bool autoLoad { get; set; }
     }
 
     [Table("Browsing_Log")]

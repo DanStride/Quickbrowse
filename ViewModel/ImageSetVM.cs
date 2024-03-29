@@ -41,6 +41,7 @@ namespace VSA_Viewer.ViewModel
             KeyBindingsWindowCommand = new KeyBindingsWindowCommand(this);
             _db = new DatabaseHandler();
             _repo = new Repo();
+            LoadSettingsFromDB();
         }
         private DatabaseHandler _db;
         private Repo _repo;
@@ -67,6 +68,18 @@ namespace VSA_Viewer.ViewModel
         public SettingsWindowCommand SettingsWindowCommand { get; set; }
         public SetNewSavePathCommand SetNewSavePathCommand { get; set; }
         public KeyBindingsWindowCommand KeyBindingsWindowCommand { get; set; }
+
+        private bool loadStateOnStartup;
+        public bool LoadStateOnStartup
+        {
+            get { return loadStateOnStartup; }
+            set
+            {
+                loadStateOnStartup = value;
+                OnPropertyChanged("LoadStateOnStartup");
+                _db.SetLoadStateOnStartup(loadStateOnStartup);
+            }
+        }
 
         private string savePath;
         public string SavePath
@@ -185,8 +198,11 @@ namespace VSA_Viewer.ViewModel
             }
         }
 
-
-        
+        private void LoadSettingsFromDB()
+        {
+            var appState = _db.GetState();
+            LoadStateOnStartup = appState.autoLoad;
+        }
 
         private ObservableCollection<string> GetImagesInFolder()
         {
@@ -427,7 +443,7 @@ namespace VSA_Viewer.ViewModel
             return "";
         }
 
-        public void LoadFromState(State state)
+        public void LoadFromState(App_State state)
         {
             SavePath = state.savePath;
             SetImageSet(state.currentImage);

@@ -13,7 +13,8 @@
         WindowStartupLocation="CenterScreen"
         MinWidth="400"
         MinHeight="300"
-        Icon="Pictures-icon.png">
+        Icon="Pictures-icon.png"
+        Loaded="Window_Loaded">
 
     <Window.Resources>
         <vm:ImageSetVM x:Key="vm" />
@@ -447,7 +448,8 @@
                           SelectionChanged="filesListView_SelectionChanged"
                           Background="{x:Null}"
                           BorderBrush="{DynamicResource VSABlue}"
-                          Foreground="AntiqueWhite" Style="{DynamicResource VSAListViewStyle}">
+                          Foreground="AntiqueWhite" Style="{DynamicResource VSAListViewStyle}"
+                          MouseDoubleClick="filesListView_MouseDoubleClick">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <ContentPresenter Content="{Binding Converter={StaticResource listViewConverter}}">

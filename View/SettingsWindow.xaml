@@ -46,6 +46,12 @@
                 <TextBlock Text="{Binding SavePath}" 
                            Foreground="AntiqueWhite"
                            FontSize="15"/>
+            <CheckBox
+                    Foreground="AntiqueWhite"
+                    FontSize="15"
+                    IsChecked="{Binding LoadStateOnStartup}">
+                Load State on Startup
+            </CheckBox>
         </StackPanel>
         <Button Content="Set New Save Path"
                     Grid.Column="1"

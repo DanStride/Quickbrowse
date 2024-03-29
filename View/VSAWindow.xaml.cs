@@ -30,6 +30,11 @@ namespace VSA_Viewer
         public MainWindow()
         {
             InitializeComponent();
+            if (Resources["vm"] is ImageSetVM imageSetVM)
+            {
+                // Setting the DataContext of the window to the ViewModel
+                this.DataContext = imageSetVM;
+            }
         }
 
         private void scrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
@@ -49,5 +54,41 @@ namespace VSA_Viewer
             this.Close();
         }
 
+        private void filesListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            // Since DataContext is already set to ImageSetVM, we can cast it directly
+            if (DataContext is ImageSetVM imageSetVM)
+            {
+                if (imageSetVM.SubFolderCommand.CanExecute(null))
+                {
+                    imageSetVM.SubFolderCommand.Execute(null);
+                }
+            }
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            DatabaseHandler db = new DatabaseHandler();
+            try
+            {
+                App_State appState = db.GetState();
+                if (appState.autoLoad == true)
+                {
+                    if (DataContext is ImageSetVM imageSetVM)
+                    {
+                        if (imageSetVM.LoadStateCommand.CanExecute(null))
+                        {
+                            imageSetVM.LoadStateCommand.Execute(null);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show("An error occurred: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                db.AddErrorLogEntry(ex);
+            }
+            
+        }
     }
 }
