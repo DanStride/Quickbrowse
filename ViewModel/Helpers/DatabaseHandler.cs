@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SQLitePCL;
+using System.Windows.Forms;
+using System.Windows;
 
 namespace VSA_Viewer.Classes
 {
@@ -23,43 +25,109 @@ namespace VSA_Viewer.Classes
             }
         }
 
-        private SQLiteConnection _db;
-
         public DatabaseHandler()
         {
-            _db = new SQLiteConnection(DBPath);
-            _db.CreateTable<State>();
+            try
+            {
+                using (var db = new SQLiteConnection(dbPath))
+                {
+                    db.CreateTable<State>();
+                    db.CreateTable<Browsing_Log>();
+                    db.CreateTable<Error_Log>();
+                }
+            }
+            catch (Exception e) 
+            {
+                System.Windows.MessageBox.Show("An error occurred: " + e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                AddErrorLogEntry(e);
+            }
         }
 
         public void UpdateState(string path, string image, string saveDir)
         {
-            if (path != null && image != null)
+            try
             {
-                var state = new State
-                {
-                    folderPath = path,
-                    currentImage = image,
-                    savePath = saveDir
-                };
+                if (path != null && image != null)
 
-                _db.Delete(state);
-                _db.Insert(state);
+                    using (var db = new SQLiteConnection(dbPath))
+                    {
+                        var state = new State
+                        {
+                            folderPath = path,
+                            currentImage = image,
+                            savePath = saveDir
+                        };
+
+                        db.Delete(state);
+                        db.Insert(state);
+                    }
+            }
+            catch (Exception e)
+            {
+                System.Windows.MessageBox.Show("An error occurred: " + e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                AddErrorLogEntry(e);
             }
         }
 
         public State GetState()
         {
             var newState = new State();
-            var state = _db.Query<State>("SELECT * FROM State");
-
-            foreach (var s in state)
+            try
             {
-                newState.currentImage = s.currentImage;
-                newState.folderPath = s.folderPath;
-                newState.savePath = s.savePath;
+                using (var db = new SQLiteConnection(dbPath))
+                {
+                    var state = db.Query<State>("SELECT * FROM State");
+
+                    foreach (var s in state)
+                    {
+                        newState.currentImage = s.currentImage;
+                        newState.folderPath = s.folderPath;
+                        newState.savePath = s.savePath;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                System.Windows.MessageBox.Show("An error occurred: " + e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                AddErrorLogEntry(e);
+            }
+            return newState;
+        }
+
+        public void AddBrowsingLogEntry(Browsing_Log log)
+        {
+            try
+            {
+                using (var db = new SQLiteConnection(dbPath))
+                {
+                    var result = db.Insert(log);
+                }
+            }
+            catch (Exception e)
+            {
+                System.Windows.MessageBox.Show("An error occurred: " + e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                AddErrorLogEntry(e);
             }
 
-            return newState;
+        }
+
+        public void AddErrorLogEntry(Exception error)
+        {
+            try
+            {
+                using (var db = new SQLiteConnection(dbPath))
+                {
+                    var result = db.Insert(new Error_Log
+                    {
+                        messsage = error.Message,
+                        date = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")
+                    });
+                }
+            }
+            catch (Exception e)
+            {
+                System.Windows.MessageBox.Show("Oh god, an error trying to log the error: " + e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }

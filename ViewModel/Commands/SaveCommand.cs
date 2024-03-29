@@ -39,7 +39,8 @@ namespace VSA_Viewer.ViewModel.Commands
 
         public void Execute(object parameter)
         {
-            Repo.SaveImage(VM);
+            Repo repo = new Repo(); 
+            repo.SaveImage(VM);
         }
     }
 }

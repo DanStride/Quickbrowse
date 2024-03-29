@@ -144,7 +144,7 @@
     <Compile Include="ViewModel\Commands\SubFolderCommand.cs" />
     <Compile Include="ViewModel\Helpers\DatabaseHandler.cs" />
     <Compile Include="ViewModel\Repo.cs" />
-    <Compile Include="Model\StateClass.cs" />
+    <Compile Include="Model\DBSchema.cs" />
     <Compile Include="Model\ImageSet.cs" />
     <Compile Include="ViewModel\Commands\ExitFullScreenCommand.cs" />
     <Compile Include="ViewModel\Commands\FullScreenCommand.cs" />

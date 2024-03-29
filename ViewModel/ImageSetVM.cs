@@ -14,15 +14,59 @@ using VSA_Viewer.Model;
 using VSA_Viewer.View;
 using VSA_Viewer.ViewModel.Commands;
 
+
 namespace VSA_Viewer.ViewModel
 {
     public class ImageSetVM : INotifyPropertyChanged
     {
+        public ImageSetVM()
+        {
+            ImageSet = new ImageSet();
+            LoadCommand = new LoadCommand(this);
+            SaveCommand = new SaveCommand(this);
+            SaveEntireFolderCommand = new SaveEntireFolderCommand(this);
+            NextFolderCommand = new NextFolderCommand(this);
+            PreviousFolderCommand = new PreviousFolderCommand(this);
+            ParentFolderCommand = new ParentFolderCommand(this);
+            SubFolderCommand = new SubFolderCommand(this);
+            SaveStateCommand = new SaveStateCommand(this);
+            LoadStateCommand = new LoadStateCommand(this);
+            FullScreenCommand = new FullScreenCommand(this);
+            ExitFullScreenCommand = new ExitFullScreenCommand(this);
+            RandomImageCommand = new RandomImageCommand(this);
+            NextImageCommand = new NextImageCommand(this);
+            PreviousImageCommand = new PreviousImageCommand(this);
+            SettingsWindowCommand = new SettingsWindowCommand(this);
+            SetNewSavePathCommand = new SetNewSavePathCommand(this);
+            KeyBindingsWindowCommand = new KeyBindingsWindowCommand(this);
+            _db = new DatabaseHandler();
+            _repo = new Repo();
+        }
+        private DatabaseHandler _db;
+        private Repo _repo;
         private ImageSet imageSet { get; set; }
         public FullScreenWindow fullScreenWindow { get; set; }
         public SettingsWindow settingsWindow { get; set; }
         public KeyBindingsWindow keyBindingsWindow { get; set; }
         private static readonly string[] IMAGE_TYPES = { ".jpg", ".JPG", ".png", ".PNG", ".bmp", ".BMP", ".jpeg", ".JPEG", ".gif", ".GIF" };
+
+        public LoadCommand LoadCommand { get; set; }
+        public SaveCommand SaveCommand { get; set; }
+        public SaveEntireFolderCommand SaveEntireFolderCommand { get; set; }
+        public NextFolderCommand NextFolderCommand { get; set; }
+        public PreviousFolderCommand PreviousFolderCommand { get; set; }
+        public ParentFolderCommand ParentFolderCommand { get; set; }
+        public SubFolderCommand SubFolderCommand { get; set; }
+        public SaveStateCommand SaveStateCommand { get; set; }
+        public LoadStateCommand LoadStateCommand { get; set; }
+        public FullScreenCommand FullScreenCommand { get; set; }
+        public ExitFullScreenCommand ExitFullScreenCommand { get; set; }
+        public RandomImageCommand RandomImageCommand { get; set; }
+        public NextImageCommand NextImageCommand { get; set; }
+        public PreviousImageCommand PreviousImageCommand { get; set; }
+        public SettingsWindowCommand SettingsWindowCommand { get; set; }
+        public SetNewSavePathCommand SetNewSavePathCommand { get; set; }
+        public KeyBindingsWindowCommand KeyBindingsWindowCommand { get; set; }
 
         private string savePath;
         public string SavePath
@@ -47,23 +91,7 @@ namespace VSA_Viewer.ViewModel
 
         public int imageIndex { get; set; }
 
-        public LoadCommand LoadCommand { get; set; }
-        public SaveCommand SaveCommand { get; set; }
-        public SaveEntireFolderCommand SaveEntireFolderCommand { get; set; }
-        public NextFolderCommand NextFolderCommand { get; set; }
-        public PreviousFolderCommand PreviousFolderCommand { get; set; }
-        public ParentFolderCommand ParentFolderCommand { get; set; }
-        public SubFolderCommand SubFolderCommand { get; set; }
-        public SaveStateCommand SaveStateCommand { get; set; }
-        public LoadStateCommand LoadStateCommand { get; set; }
-        public FullScreenCommand FullScreenCommand { get; set; }
-        public ExitFullScreenCommand ExitFullScreenCommand { get; set; }
-        public RandomImageCommand RandomImageCommand { get; set; }
-        public NextImageCommand NextImageCommand { get; set; }
-        public PreviousImageCommand PreviousImageCommand { get; set; }
-        public SettingsWindowCommand SettingsWindowCommand { get; set; }
-        public SetNewSavePathCommand SetNewSavePathCommand { get; set; }
-        public KeyBindingsWindowCommand KeyBindingsWindowCommand { get; set; }
+        
 
         public static Random rnd = new Random();
 
@@ -76,6 +104,12 @@ namespace VSA_Viewer.ViewModel
             {
                 currentImage = value;
                 OnPropertyChanged("CurrentImage");
+                _db.AddBrowsingLogEntry(new Browsing_Log
+                {
+                    path = CurrentImage.ToString(),
+                    date = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")
+                });
+                
             }
         }
 
@@ -152,27 +186,7 @@ namespace VSA_Viewer.ViewModel
         }
 
 
-        public ImageSetVM()
-        {
-            ImageSet = new ImageSet();
-            LoadCommand = new LoadCommand(this);
-            SaveCommand = new SaveCommand(this);
-            SaveEntireFolderCommand = new SaveEntireFolderCommand(this);
-            NextFolderCommand = new NextFolderCommand(this);
-            PreviousFolderCommand = new PreviousFolderCommand(this);
-            ParentFolderCommand = new ParentFolderCommand(this);
-            SubFolderCommand = new SubFolderCommand(this);
-            SaveStateCommand = new SaveStateCommand(this);
-            LoadStateCommand = new LoadStateCommand(this);
-            FullScreenCommand = new FullScreenCommand(this);
-            ExitFullScreenCommand = new ExitFullScreenCommand(this);
-            RandomImageCommand = new RandomImageCommand(this);
-            NextImageCommand = new NextImageCommand(this);
-            PreviousImageCommand = new PreviousImageCommand(this);
-            SettingsWindowCommand = new SettingsWindowCommand(this);
-            SetNewSavePathCommand = new SetNewSavePathCommand(this);
-            KeyBindingsWindowCommand = new KeyBindingsWindowCommand(this);
-        }
+        
 
         private ObservableCollection<string> GetImagesInFolder()
         {
@@ -346,7 +360,7 @@ namespace VSA_Viewer.ViewModel
 
         public void ChangeToNextFolder()
         {
-            string nextFolder = Repo.GetNextFolder(this);
+            string nextFolder = _repo.GetNextFolder(this);
 
             string imagePath = GetImageFromFolder(nextFolder);
 
@@ -355,7 +369,7 @@ namespace VSA_Viewer.ViewModel
 
         public void ChangeToPreviousFolder()
         {
-            string nextFolder = Repo.GetPreviousFolder(this);
+            string nextFolder = _repo.GetPreviousFolder(this);
 
             string imagePath = GetImageFromFolder(nextFolder);
 
@@ -364,9 +378,9 @@ namespace VSA_Viewer.ViewModel
 
         public void ChangeToParentFolder()
         {
-            PreviousFolder = Repo.GetCurrentFolderName(this);
+            PreviousFolder = _repo.GetCurrentFolderName(this);
 
-            string parentFolder = Repo.GetParentFolder(this);
+            string parentFolder = _repo.GetParentFolder(this);
 
             SetImageSetForDirectory(parentFolder);
         }

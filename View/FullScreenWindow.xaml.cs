@@ -46,7 +46,8 @@ namespace VSA_Viewer
             }
             if (e.Key == Key.Enter || e.Key == Key.Space)
             {
-                Repo.SaveImage(VM);
+                Repo repo = new Repo();
+                repo.SaveImage(VM);
             }
             if (e.Key == Key.Right || e.Key == Key.D)
             {

@@ -5,15 +5,22 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Forms;
 using VSA_Viewer.Model;
 using VSA_Viewer.ViewModel;
 
 namespace VSA_Viewer.Classes
 {
-    public static class Repo
+    public class Repo
     {
-        public static void SaveImage(ImageSetVM VM)
+        DatabaseHandler _db;
+        public Repo() 
+        {
+            _db = new DatabaseHandler();
+        }
+
+        public void SaveImage(ImageSetVM VM)
         {
             string currentImage = Path.GetFileName(VM.CurrentImage.ToString());
             string currentImageFullPath = VM.CurrentImage.UriSource.LocalPath;
@@ -26,7 +33,7 @@ namespace VSA_Viewer.Classes
                     if (!System.IO.File.Exists($"{VM.SavePath}\\{currentImage}"))
                     {
                         System.IO.File.Copy($"{currentImageFullPath}", $"{VM.SavePath}\\{currentImage}");
-                        MessageBox.Show("Save Successful");
+                        System.Windows.Forms.MessageBox.Show("Save Successful");
                     }
                     else
                     {
@@ -47,7 +54,7 @@ namespace VSA_Viewer.Classes
                     if (!System.IO.File.Exists($"{VM.SavePath}\\{currentImage}"))
                     {
                         System.IO.File.Copy($"{currentImageFullPath}", $"{VM.SavePath}\\{currentImage}");
-                        MessageBox.Show("Save Successful");
+                        System.Windows.Forms.MessageBox.Show("Save Successful");
                     }
                     else
                     {
@@ -55,14 +62,15 @@ namespace VSA_Viewer.Classes
                     }
                 }
             }
-            catch
+            catch (Exception e)
             {
-                MessageBox.Show("Something went wrong");
+                System.Windows.MessageBox.Show("An error occurred: " + e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                _db.AddErrorLogEntry(e);
             }
 
         }
 
-        private static void SaveImageRenamingLoop(string currentImage, string currentImageFullPath, string savePath)
+        private void SaveImageRenamingLoop(string currentImage, string currentImageFullPath, string savePath)
         {
             int counter = 0;
             string extension = Path.GetExtension(currentImage);
@@ -79,14 +87,14 @@ namespace VSA_Viewer.Classes
                 if (!System.IO.File.Exists(whilePath))
                 {
                     System.IO.File.Copy($"{currentImageFullPath}", whilePath);
-                    MessageBox.Show("Save Successful");
+                    System.Windows.Forms.MessageBox.Show("Save Successful");
                     runLoop = false;
                     break;
                 }
             }
         }
 
-        public static string GetNextFolder(ImageSetVM vm)
+        public string GetNextFolder(ImageSetVM vm)
         {
             string parentFolder = Directory.GetParent(vm.ImageSet.FolderPath).ToString();
 
@@ -103,7 +111,7 @@ namespace VSA_Viewer.Classes
             return vm.ImageSet.FolderPath;
         }
 
-        public static string GetPreviousFolder(ImageSetVM vm)
+        public string GetPreviousFolder(ImageSetVM vm)
         {
             string parentFolder = Directory.GetParent(vm.ImageSet.FolderPath).ToString();
 
@@ -120,7 +128,7 @@ namespace VSA_Viewer.Classes
             return vm.ImageSet.FolderPath;
         }
 
-        public static string GetParentFolder(ImageSetVM vm)
+        public string GetParentFolder(ImageSetVM vm)
         {
             if (Directory.GetParent(vm.ImageSet.FolderPath) != null)
             {
@@ -135,7 +143,7 @@ namespace VSA_Viewer.Classes
             return vm.ImageSet.FolderPath;
         }
 
-        public static string GetCurrentFolderName(ImageSetVM vm)
+        public string GetCurrentFolderName(ImageSetVM vm)
         {
             var directoryInfo = new DirectoryInfo(vm.ImageSet.FolderPath);
             if (directoryInfo.Exists)
@@ -148,7 +156,7 @@ namespace VSA_Viewer.Classes
             }
         }
 
-        public static void SaveEntireFolder(ImageSetVM vm)
+        public void SaveEntireFolder(ImageSetVM vm)
         {
             try
             {
@@ -186,16 +194,17 @@ namespace VSA_Viewer.Classes
                 if (System.IO.Directory.Exists(sourceDirectory))
                 {
                     CopyAll(sourceDirectory, destinationDirectory);
-                    MessageBox.Show("Save Successful");
+                    System.Windows.Forms.MessageBox.Show("Save Successful");
                 }
                 else
                 {
-                    MessageBox.Show($"Source directory does not exist: {sourceDirectory}");
+                    System.Windows.Forms.MessageBox.Show($"Source directory does not exist: {sourceDirectory}");
                 }
             }
-            catch
+            catch (Exception e)
             {
-                MessageBox.Show("Something went wrong");
+                System.Windows.MessageBox.Show("An error occurred: " + e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                _db.AddErrorLogEntry(e);
             }
 
         }
