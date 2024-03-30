@@ -57,7 +57,7 @@ namespace VSA_Viewer
             {
                 VM.ChangeToPreviousFolder();
             }
-            if (e.Key == Key.NumPad0 || e.Key == Key.LeftShift)
+            if (e.Key == Key.NumPad0 || e.Key == Key.R)
             {
                 VM.ChangeToRandomImage();
             }

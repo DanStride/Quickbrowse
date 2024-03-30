@@ -1,14 +1,36 @@
 # Quickbrowse
 
-Quickbrowse allows the user to browse through images quickly and copy images to a designated folder with a keypress.
+Have you ever needed a quick way to flip through directories upon directories to find and copy all images of George to a single folder?
 
-It uses a main window with a listview, menu bar and some buttons, and a full screen mode can also be activated.
+Well you probably haven't, but I have. This is why I decided to make Quickbrowse; an application which allows the user to flip through photos, save them, and navigate through directories using the keyboard. 
 
-After loading an image from a folder (using the menu bar option) the listview will populate with valid image files and the selected image will be displayed.
+## Features:
+- Keyboard navigation with WASD
+- Target folder selection
+- Stateful application, can remember previous session
+- Full screen mode
 
-Pressing up or down on the arrow keys will change the image respectively (as will clicking on the listview)
+## Main Window Keyboard Bindings:
+| Key      | Action      |
+|----------|-------------|
+| `W`, `Up` | Previous image in current directory        |
+| `S`, `Down` | Next image in current directory       |
+| `A`, `Left` | Change laterally to previous sibling folder within the parent directory |
+| `D`, `Right` | Change laterally to next sibling folder within the parent directory |
+| `Q`, `Period` | Change directory to parent directory |
+| `E`, `Forward Slash` | Change directory to the selected child directory |
+| `R`, `Numpad 0` | Select a random image from the current directory |
+| `Space`, `Enter` | Copy and save the currently selected image to the save directory |
+| `X` | Copy and save the current directory and its contents to the save directory |
 
-Pressing left or right will change folder within the parent directory. This is useful when there are multiple albums within a parent folder.
-
-If the save path has been selected (done from settings) the currently displayed image can be copied into the designated folder by pressing enter.
+## Full Screen Window Keyboard Bindings:
+| Key      | Action      |
+|----------|-------------|
+| `W`, `Up` | Previous image in current directory        |
+| `S`, `Down` | Next image in current directory       |
+| `A`, `Left` | Change laterally to previous sibling folder within the parent directory |
+| `D`, `Right` | Change laterally to next sibling folder within the parent directory |
+| `R`, `Numpad 0` | Select a random image from the current directory |
+| `Space`, `Enter` | Copy and save the currently selected image to the save directory |
+| `Escape` | Close the fullscreen window |
 
