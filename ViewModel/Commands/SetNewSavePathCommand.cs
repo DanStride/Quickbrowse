@@ -37,7 +37,7 @@ namespace VSA_Viewer.ViewModel.Commands
 
                 if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
                 {
-                    VM.SavePath = fbd.SelectedPath;
+                    VM.SetSavePath(fbd.SelectedPath);
                 }
             }
         }

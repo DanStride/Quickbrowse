@@ -71,17 +71,17 @@ namespace VSA_Viewer
             DatabaseHandler db = new DatabaseHandler();
             try
             {
-                App_State appState = db.GetState();
-                if (appState.autoLoad == true)
-                {
-                    if (DataContext is ImageSetVM imageSetVM)
-                    {
-                        if (imageSetVM.LoadStateCommand.CanExecute(null))
-                        {
-                            imageSetVM.LoadStateCommand.Execute(null);
-                        }
-                    }
-                }
+                //Settings settings = db.GetSettings();
+                //if (settings.autoLoad == true)
+                //{
+                //    if (DataContext is ImageSetVM imageSetVM)
+                //    {
+                //        if (imageSetVM.LoadStateCommand.CanExecute(null))
+                //        {
+                //            imageSetVM.LoadStateCommand.Execute(null);
+                //        }
+                //    }
+                //}
             }
             catch (Exception ex)
             {

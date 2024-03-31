@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using SQLitePCL;
 using System.Windows.Forms;
 using System.Windows;
+using VSA_Viewer.Properties;
 
 namespace VSA_Viewer.Classes
 {
@@ -31,7 +32,7 @@ namespace VSA_Viewer.Classes
             {
                 using (var db = new SQLiteConnection(dbPath))
                 {
-                    db.CreateTable<App_State>();
+                    db.CreateTable<Settings>();
                     db.CreateTable<Browsing_Log>();
                     db.CreateTable<Error_Log>();
                 }
@@ -43,47 +44,31 @@ namespace VSA_Viewer.Classes
             }
         }
 
-        public void UpdateState(string path, string image, string saveDir)
+        public void UpdateSettings(Settings newSetting)
         {
             try
             {
-                if (path != null && image != null)
-
+                if (newSetting != null)
+                {
                     using (var db = new SQLiteConnection(dbPath))
                     {
-                        var state = new App_State
+                        var existingSettings = db.Query<Settings>("SELECT * FROM Settings WHERE Setting_Name = ?", newSetting.settingName);
+
+                        if (existingSettings.Any())
                         {
-                            folderPath = path,
-                            currentImage = image,
-                            savePath = saveDir
-                        };
 
-                        db.Delete(state);
-                        db.Insert(state);
-                    }
-            }
-            catch (Exception e)
-            {
-                System.Windows.MessageBox.Show("An error occurred: " + e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                AddErrorLogEntry(e);
-            }
-        }
+                            var settingToUpdate = existingSettings.First();
 
-        public App_State GetState()
-        {
-            var newState = new App_State();
-            try
-            {
-                using (var db = new SQLiteConnection(dbPath))
-                {
-                    var state = db.Query<App_State>("SELECT * FROM App_State LIMIT 1").FirstOrDefault();
+                            settingToUpdate.settingValue = newSetting.settingValue;
+                            settingToUpdate.enabled = newSetting.enabled;
 
-                    if (state != null)
-                    {
-                        newState.currentImage = state.currentImage;
-                        newState.folderPath = state.folderPath;
-                        newState.savePath = state.savePath;
-                        newState.autoLoad = state.autoLoad;
+                            db.Update(settingToUpdate);
+                        }
+                        else
+                        {
+                            db.Insert(newSetting);
+                        }
+
                     }
                 }
             }
@@ -92,7 +77,45 @@ namespace VSA_Viewer.Classes
                 System.Windows.MessageBox.Show("An error occurred: " + e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 AddErrorLogEntry(e);
             }
-            return newState;
+        }
+
+        public List<Settings> GetSettings()
+        {
+            var settings = new List<Settings>();
+            try
+            {
+                using (var db = new SQLiteConnection(dbPath))
+                {
+                    settings = db.Query<Settings>("SELECT * FROM Settings");
+                }
+            }
+            catch (Exception e)
+            {
+                System.Windows.MessageBox.Show("An error occurred: " + e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                AddErrorLogEntry(e);
+            }
+            return settings;
+        }
+
+        public void AddDefaultSettings()
+        {
+            try
+            {
+                using (var db = new SQLiteConnection(dbPath))
+                {
+                    db.Insert(new Settings
+                    {
+                        settingName = "LoadStateOnStartup",
+                        settingValue = "0",
+                        enabled = false
+                    });
+                }
+            }
+            catch (Exception e)
+            {
+                System.Windows.MessageBox.Show("An error occurred: " + e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                AddErrorLogEntry(e);
+            }
         }
 
         public void AddBrowsingLogEntry(Browsing_Log log)
@@ -131,25 +154,28 @@ namespace VSA_Viewer.Classes
             }
         }
 
-        public void SetLoadStateOnStartup(bool state)
+        public string GetMostRecentImageFromLog()
         {
+            string imagePath = "";
             try
             {
                 using (var db = new SQLiteConnection(dbPath))
                 {
-                    var appState = db.Table<App_State>().FirstOrDefault();
-                    if (appState != null)
+                    var result = db.Table<Browsing_Log>().LastOrDefault();
+
+                    if (result != null)
                     {
-                        appState.autoLoad = state;
-                        db.Update(appState);
+                        imagePath = result.path;
                     }
                 }
             }
             catch (Exception e)
             {
-                System.Windows.MessageBox.Show("An error occurred: " + e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                AddErrorLogEntry(e);
+                System.Windows.MessageBox.Show("Oh god, an error trying to log the error: " + e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+
+            return imagePath;
         }
+
     }
 }

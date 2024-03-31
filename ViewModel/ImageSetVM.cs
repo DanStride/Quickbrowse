@@ -3,11 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Configuration;
 using System.IO;
 using System.IO.Packaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media.Imaging;
 using VSA_Viewer.Classes;
 using VSA_Viewer.Model;
@@ -29,8 +31,8 @@ namespace VSA_Viewer.ViewModel
             PreviousFolderCommand = new PreviousFolderCommand(this);
             ParentFolderCommand = new ParentFolderCommand(this);
             SubFolderCommand = new SubFolderCommand(this);
-            SaveStateCommand = new SaveStateCommand(this);
-            LoadStateCommand = new LoadStateCommand(this);
+            SaveSettingsCommand = new SaveSettingsCommand(this);
+            LoadStateCommand = new LoadSettingsCommand(this);
             FullScreenCommand = new FullScreenCommand(this);
             ExitFullScreenCommand = new ExitFullScreenCommand(this);
             RandomImageCommand = new RandomImageCommand(this);
@@ -42,6 +44,7 @@ namespace VSA_Viewer.ViewModel
             _db = new DatabaseHandler();
             _repo = new Repo();
             LoadSettingsFromDB();
+            LoadState();
         }
         private DatabaseHandler _db;
         private Repo _repo;
@@ -58,8 +61,8 @@ namespace VSA_Viewer.ViewModel
         public PreviousFolderCommand PreviousFolderCommand { get; set; }
         public ParentFolderCommand ParentFolderCommand { get; set; }
         public SubFolderCommand SubFolderCommand { get; set; }
-        public SaveStateCommand SaveStateCommand { get; set; }
-        public LoadStateCommand LoadStateCommand { get; set; }
+        public SaveSettingsCommand SaveSettingsCommand { get; set; }
+        public LoadSettingsCommand LoadStateCommand { get; set; }
         public FullScreenCommand FullScreenCommand { get; set; }
         public ExitFullScreenCommand ExitFullScreenCommand { get; set; }
         public RandomImageCommand RandomImageCommand { get; set; }
@@ -69,6 +72,7 @@ namespace VSA_Viewer.ViewModel
         public SetNewSavePathCommand SetNewSavePathCommand { get; set; }
         public KeyBindingsWindowCommand KeyBindingsWindowCommand { get; set; }
 
+        // App Settings
         private bool loadStateOnStartup;
         public bool LoadStateOnStartup
         {
@@ -77,7 +81,6 @@ namespace VSA_Viewer.ViewModel
             {
                 loadStateOnStartup = value;
                 OnPropertyChanged("LoadStateOnStartup");
-                _db.SetLoadStateOnStartup(loadStateOnStartup);
             }
         }
 
@@ -200,8 +203,59 @@ namespace VSA_Viewer.ViewModel
 
         private void LoadSettingsFromDB()
         {
-            var appState = _db.GetState();
-            LoadStateOnStartup = appState.autoLoad;
+            List<Settings> settings = _db.GetSettings();
+
+            // make this a check for all default settings rather than a count check
+            if (settings.Count == 0) {
+                _db.AddDefaultSettings();
+                settings = _db.GetSettings();
+            }
+
+            var loadStateOnStartup = settings.FirstOrDefault(s => s.settingName == "LoadStateOnStartup");
+            if (loadStateOnStartup != null)
+            {
+                LoadStateOnStartup = loadStateOnStartup.enabled;
+            }
+
+            var savePath = settings.FirstOrDefault(s => s.settingName == "SavePath");
+            if (savePath != null)
+            {
+                SavePath = savePath.settingValue;
+            }
+        }
+
+        private void LoadState()
+        {
+            if (LoadStateOnStartup == true)
+            {
+                // check last image
+                string image = _db.GetMostRecentImageFromLog();
+                if (!String.IsNullOrEmpty(image)) 
+                {
+                    SetImageSet(image);
+                }
+            }
+        }
+
+        public void SetSavePath(string path)
+        {
+
+            try
+            {
+                SavePath = path;
+                _db.UpdateSettings(new Settings
+                {
+                    settingName = "SavePath",
+                    settingValue = path,
+                    enabled = true
+                });
+
+            }
+            catch (Exception e)
+            {
+                System.Windows.MessageBox.Show("An error occurred: " + e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                _db.AddErrorLogEntry(e);
+            }
         }
 
         private ObservableCollection<string> GetImagesInFolder()
@@ -288,8 +342,11 @@ namespace VSA_Viewer.ViewModel
         {
             if ((IMAGE_TYPES.Any(i => i.Contains(Path.GetExtension(fileName)))) && fileName != "")
             {
-                CurrentImage = new BitmapImage(new Uri(fileName));
-                ImageSet.FolderPath = System.IO.Path.GetDirectoryName(fileName);
+                Uri fileUri = new Uri(fileName);
+                string localPath = fileUri.LocalPath;
+
+                CurrentImage = new BitmapImage(fileUri);
+                ImageSet.FolderPath = System.IO.Path.GetDirectoryName(localPath);
 
                 ImageSet.ImagesInFolder = GetImagesInFolder();
                 ImageSet.FoldersInFolder = GetFoldersInFolder();
@@ -443,10 +500,10 @@ namespace VSA_Viewer.ViewModel
             return "";
         }
 
-        public void LoadFromState(App_State state)
+        public void LoadFromState(Settings settings)
         {
-            SavePath = state.savePath;
-            SetImageSet(state.currentImage);
+            //SavePath = state.savePath;
+            //SetImageSet(state.currentImage);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

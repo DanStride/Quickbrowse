@@ -149,11 +149,11 @@
     <Compile Include="ViewModel\Commands\ExitFullScreenCommand.cs" />
     <Compile Include="ViewModel\Commands\FullScreenCommand.cs" />
     <Compile Include="ViewModel\Commands\LoadCommand.cs" />
-    <Compile Include="ViewModel\Commands\LoadStateCommand.cs" />
+    <Compile Include="ViewModel\Commands\LoadSettingsCommand.cs" />
     <Compile Include="ViewModel\Commands\NextFolderCommand.cs" />
     <Compile Include="ViewModel\Commands\PreviousFolderCommand.cs" />
     <Compile Include="ViewModel\Commands\SaveCommand.cs" />
-    <Compile Include="ViewModel\Commands\SaveStateCommand.cs" />
+    <Compile Include="ViewModel\Commands\SaveSettingsCommand.cs" />
     <Compile Include="ViewModel\ImageSetVM.cs" />
     <Compile Include="ViewModel\ValueConverters\ListViewFileNameConverter.cs" />
     <Compile Include="View\FullScreenWindow.xaml.cs">

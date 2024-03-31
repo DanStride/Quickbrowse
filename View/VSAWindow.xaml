@@ -375,7 +375,7 @@
                           Command="{Binding PreviousFolderCommand}" />
                 <MenuItem Header="Save State"
                           Style="{StaticResource VSAMenuItem}"
-                          Command="{Binding SaveStateCommand}" />
+                          Command="{Binding SaveSettingsCommand}" />
                 <MenuItem Header="Restore State"
                           Style="{StaticResource VSAMenuItem}"
                           Command="{Binding LoadStateCommand}" />

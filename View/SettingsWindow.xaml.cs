@@ -31,6 +31,13 @@ namespace VSA_Viewer.View
 
         private void doneButton_Click(object sender, RoutedEventArgs e)
         {
+            if (DataContext is ImageSetVM imageSetVM)
+            {
+                if (imageSetVM.SaveSettingsCommand.CanExecute(null))
+                {
+                    imageSetVM.SaveSettingsCommand.Execute(null);
+                }
+            }
             this.Close();
         }
 
