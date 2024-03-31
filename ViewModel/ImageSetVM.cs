@@ -258,6 +258,22 @@ namespace VSA_Viewer.ViewModel
             }
         }
 
+        public void SetDBRecordsForSave(string saveType)
+        {
+            // if single save, add record to copy_history and and give them a ref to browsing_history Set flag on browsin history 
+            if (saveType == "single_save")
+            {
+                string path = SelectedImageUri.ToString();
+                _db.AddEntriesForSave(path, SavePath);
+            }
+            else if (saveType == "folder_save")
+            {
+                List<string> paths = ImageSet.ImagesInFolder.ToList();
+                _db.AddEntriesForFolderSave(paths, SavePath);
+            }
+            // if folder save, add records to copy history and give them a ref to browsing_history. Set flag on browsin history 
+        }
+
         private ObservableCollection<string> GetImagesInFolder()
         {
             ObservableCollection<string> newImageSet = new ObservableCollection<string>();

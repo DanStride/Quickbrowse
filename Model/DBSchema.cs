@@ -38,6 +38,26 @@ namespace VSA_Viewer.Classes
         public bool saved {  get; set; }
     }
 
+    [Table("Copy_Log")]
+    public class Copy_Log
+    {
+        [PrimaryKey, AutoIncrement]
+        [Column("ID")]
+        public int id { get; set; }
+
+        [Column("Image_Path")]
+        public string imagePath { get; set; }
+        [Column("Save_Path")]
+        public string savePath { get; set; }
+        [Column("Browsing_Log_Ref")]
+        public int browsingLogRef { get; set; }
+        [Column("Folder_Save")]
+        public bool folderSave { get; set; }
+
+        [Column("Date")]
+        public string date { get; set; }
+    }
+
     [Table("Error_Log")]
     public class Error_Log
     {

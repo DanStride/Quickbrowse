@@ -10,6 +10,8 @@ using SQLitePCL;
 using System.Windows.Forms;
 using System.Windows;
 using VSA_Viewer.Properties;
+using VSA_Viewer.ViewModel;
+using VSA_Viewer.ViewModel.Commands;
 
 namespace VSA_Viewer.Classes
 {
@@ -35,6 +37,7 @@ namespace VSA_Viewer.Classes
                     db.CreateTable<Settings>();
                     db.CreateTable<Browsing_Log>();
                     db.CreateTable<Error_Log>();
+                    db.CreateTable<Copy_Log>();
                 }
             }
             catch (Exception e) 
@@ -171,10 +174,79 @@ namespace VSA_Viewer.Classes
             }
             catch (Exception e)
             {
-                System.Windows.MessageBox.Show("Oh god, an error trying to log the error: " + e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Windows.MessageBox.Show("An error occurred: " + e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                AddErrorLogEntry(e);
             }
 
             return imagePath;
+        }
+
+        public void AddEntriesForSave(string imagePath, string savePath)
+        {
+            try
+            {
+                using ( var db = new SQLiteConnection(dbPath))
+                {
+                    var currentBrowsingEntry = db.Table<Browsing_Log>().LastOrDefault();
+
+                    Copy_Log copyLog = new Copy_Log
+                    {
+                        imagePath = imagePath,
+                        savePath = savePath,
+                        browsingLogRef = currentBrowsingEntry.id,
+                        folderSave = false,
+                        date = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")
+                    };
+
+                    currentBrowsingEntry.saved = true;
+
+                    db.Insert(copyLog);
+                    db.Update(currentBrowsingEntry);
+
+                }
+            }
+            catch (Exception e)
+            {
+                System.Windows.MessageBox.Show("An error occurred: " + e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                AddErrorLogEntry(e);
+            }
+        }
+
+        public void AddEntriesForFolderSave(List<string> imagePaths, string savePath)
+        {
+            try
+            {
+                using (var db = new SQLiteConnection(dbPath))
+                {
+                    var currentBrowsingEntry = db.Table<Browsing_Log>().LastOrDefault();
+
+                    if (currentBrowsingEntry != null)
+                    {
+                        foreach (var image in imagePaths)
+                        {
+                            Copy_Log copyLog = new Copy_Log
+                            {
+                                imagePath = image,
+                                savePath = savePath,
+                                browsingLogRef = currentBrowsingEntry.id,
+                                folderSave = true,
+                                date = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")
+                            };
+
+                            db.Insert(copyLog);
+                        }
+                    }
+
+                    currentBrowsingEntry.saved = true;
+                    db.Update(currentBrowsingEntry);
+
+                }
+            }
+            catch (Exception e)
+            {
+                System.Windows.MessageBox.Show("An error occurred: " + e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                AddErrorLogEntry(e);
+            }
         }
 
     }

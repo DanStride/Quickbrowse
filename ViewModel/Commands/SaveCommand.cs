@@ -40,7 +40,11 @@ namespace VSA_Viewer.ViewModel.Commands
         public void Execute(object parameter)
         {
             Repo repo = new Repo(); 
-            repo.SaveImage(VM);
+            bool saveSuccess = repo.SaveImage(VM);
+            if (saveSuccess)
+            {
+                VM.SetDBRecordsForSave("single_save");
+            }
         }
     }
 }

@@ -20,7 +20,7 @@ namespace VSA_Viewer.Classes
             _db = new DatabaseHandler();
         }
 
-        public void SaveImage(ImageSetVM VM)
+        public bool SaveImage(ImageSetVM VM)
         {
             string currentImage = Path.GetFileName(VM.CurrentImage.ToString());
             string currentImageFullPath = VM.CurrentImage.UriSource.LocalPath;
@@ -34,10 +34,12 @@ namespace VSA_Viewer.Classes
                     {
                         System.IO.File.Copy($"{currentImageFullPath}", $"{VM.SavePath}\\{currentImage}");
                         System.Windows.Forms.MessageBox.Show("Save Successful");
+                        return true;
                     }
                     else
                     {
                         SaveImageRenamingLoop(currentImage, currentImageFullPath, VM.SavePath);
+                        return true;
                     }
                 }
                 else
@@ -55,10 +57,12 @@ namespace VSA_Viewer.Classes
                     {
                         System.IO.File.Copy($"{currentImageFullPath}", $"{VM.SavePath}\\{currentImage}");
                         System.Windows.Forms.MessageBox.Show("Save Successful");
+                        return true;
                     }
                     else
                     {
                         SaveImageRenamingLoop(currentImage, currentImageFullPath, VM.SavePath);
+                        return true;
                     }
                 }
             }
@@ -66,6 +70,7 @@ namespace VSA_Viewer.Classes
             {
                 System.Windows.MessageBox.Show("An error occurred: " + e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 _db.AddErrorLogEntry(e);
+                return false;
             }
 
         }
@@ -156,29 +161,39 @@ namespace VSA_Viewer.Classes
             }
         }
 
-        public void SaveEntireFolder(ImageSetVM vm)
+        public bool SaveEntireFolder(ImageSetVM vm)
         {
             try
             {
                 string sourceDirectory = System.IO.Path.GetDirectoryName(vm.SelectedImageUri.LocalPath);
                 string destinationDirectory = vm.SavePath;
+                string targetPath = "";
 
-                // Check if the destination directory exists; if not, create it.
-                if (!System.IO.Directory.Exists(destinationDirectory))
+                bool CreateDirectory()
                 {
-                    using (var fbd = new FolderBrowserDialog())
+                    try
                     {
-                        DialogResult result = fbd.ShowDialog();
+                        string dir = vm.SavePath;
+                        string folderName = System.IO.Directory.GetParent(vm.SelectedImageUri.LocalPath).Name;
+                        string target = $"{dir}\\{folderName}";
+                        int counter = 2;
 
-                        if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
+                        while (Directory.Exists(target))
                         {
-                            vm.SavePath = fbd.SelectedPath;
-                            destinationDirectory = vm.SavePath;
+                            target = $"{target} {counter}";
+                            counter++;
                         }
+
+                        targetPath = target;
+                        System.IO.Directory.CreateDirectory(target);
+                        return true;
+                    }
+                    catch
+                    {
+                        return false;
                     }
                 }
 
-                // Method to copy all files and subdirectories
                 void CopyAll(string source, string target)
                 {
                     System.IO.Directory.CreateDirectory(target);
@@ -190,21 +205,29 @@ namespace VSA_Viewer.Classes
                         System.IO.File.Copy(filePath, filePath.Replace(source, target), true);
                 }
 
-                // Check if source directory exists before attempting to copy
-                if (System.IO.Directory.Exists(sourceDirectory))
+                bool createDirectorySuccess = CreateDirectory();
+                if (!createDirectorySuccess)
                 {
-                    CopyAll(sourceDirectory, destinationDirectory);
+                    throw new Exception("Failed to create the directory.");
+                }
+
+                if (System.IO.Directory.Exists(sourceDirectory) && System.IO.Directory.Exists(targetPath))
+                {
+                    CopyAll(sourceDirectory, targetPath);
                     System.Windows.Forms.MessageBox.Show("Save Successful");
+                    return true;
                 }
                 else
                 {
-                    System.Windows.Forms.MessageBox.Show($"Source directory does not exist: {sourceDirectory}");
+                    System.Windows.Forms.MessageBox.Show($"Source or target directory does not exist: {sourceDirectory}");
+                    return false;
                 }
             }
             catch (Exception e)
             {
                 System.Windows.MessageBox.Show("An error occurred: " + e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 _db.AddErrorLogEntry(e);
+                return false;
             }
 
         }

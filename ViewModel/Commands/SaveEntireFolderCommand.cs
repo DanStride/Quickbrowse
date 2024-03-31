@@ -40,7 +40,11 @@ namespace VSA_Viewer.ViewModel.Commands
         public void Execute(object parameter)
         {
             Repo repo = new Repo();
-            repo.SaveEntireFolder(VM);
+            bool SaveSuccess = repo.SaveEntireFolder(VM);
+            if (SaveSuccess)
+            {
+                VM.SetDBRecordsForSave("folder_save");
+            }
         }
     }
 }
